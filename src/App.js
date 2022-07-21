@@ -14,7 +14,7 @@ import { TransactionFactory } from "@ethereumjs/tx";
 import { toBuffer } from "ethereumjs-util";
 import { utils } from "ethers";
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Switch,
   Route,
   Link as RLink,
@@ -27,7 +27,7 @@ function App() {
         <AppBar position="static">
           <Toolbar>
             <div style={{ flex: "auto" }}>
-              <RLink to="/" style={{ color: "black", textDecoration: "none" }}>
+              <RLink to="/" style={{ color: "white", textDecoration: "none" }}>
                 <Typography variant="h5" component="span">
                   Decode Ethereum serialized transaction
                 </Typography>
@@ -35,7 +35,7 @@ function App() {
               <RLink
                 to="/error-decode"
                 style={{
-                  color: "black",
+                  color: "white",
                   textDecoration: "none",
                   marginLeft: 20,
                 }}
