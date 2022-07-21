@@ -12,8 +12,70 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import Box from "@mui/material/Box";
 import { TransactionFactory } from "@ethereumjs/tx";
 import { toBuffer } from "ethereumjs-util";
+import { utils } from "ethers";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link as RLink,
+} from "react-router-dom";
 
 function App() {
+  return (
+    <Router>
+      <div>
+        <AppBar position="static">
+          <Toolbar>
+            <div style={{ flex: "auto" }}>
+              <RLink to="/" style={{ color: "black", textDecoration: "none" }}>
+                <Typography variant="h5" component="span">
+                  Decode Ethereum serialized transaction
+                </Typography>
+              </RLink>
+              <RLink
+                to="/error-decode"
+                style={{
+                  color: "black",
+                  textDecoration: "none",
+                  marginLeft: 20,
+                }}
+              >
+                <Typography variant="h6" component="span">
+                  Decode error
+                </Typography>
+              </RLink>
+            </div>
+            <Link
+              href="//github.com/aquiladev/decode-eth-tx"
+              target="_blank"
+              rel="noopener"
+            >
+              <IconButton
+                color="default"
+                aria-label="GitHub repo"
+                component="span"
+              >
+                <GitHubIcon fontSize="default" style={{ color: "white" }} />
+              </IconButton>
+            </Link>
+          </Toolbar>
+        </AppBar>
+        <Container style={{ marginTop: 20 }}>
+          <Switch>
+            <Route exact path="/">
+              <DecodeTx />
+            </Route>
+            <Route path="/error-decode">
+              <DecodeError />
+            </Route>
+          </Switch>
+        </Container>
+      </div>
+    </Router>
+  );
+}
+
+function DecodeTx() {
   const [error, setError] = useState();
   const [txn, setTxn] = useState();
   const [text, setText] = useState();
@@ -36,68 +98,100 @@ function App() {
   };
 
   return (
-    <div>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Decode Ethereum serialized transaction
-          </Typography>
-          <Link
-            href="//github.com/aquiladev/decode-eth-tx"
-            target="_blank"
-            rel="noopener"
-          >
-            <IconButton
-              color="default"
-              aria-label="GitHub repo"
-              component="span"
-            >
-              <GitHubIcon fontSize="default" style={{ color: "white" }} />
-            </IconButton>
-          </Link>
-        </Toolbar>
-      </AppBar>
-      <Container style={{ marginTop: 20 }}>
-        <TextField
-          label="Raw Txn"
-          multiline
-          rows={4}
-          value={text}
-          onChange={handleChange}
-          fullWidth
-          style={{ paddingBottom: 20 }}
-        />
-        <Button variant="contained" onClick={handleDecode} disabled={!text}>
-          Decode
-        </Button>
-        {txn && (
-          <div
-            style={{
-              overflowY: "scroll",
-              border: "1px dashed grey",
-              padding: "0 13px",
-              marginTop: 20,
-            }}
-          >
-            <pre>{txn}</pre>
-          </div>
-        )}
-        {error && (
-          <Alert severity="error" style={{ marginTop: 20 }}>
-            {error}
-          </Alert>
-        )}
-        <Box style={{ marginTop: 20 }}>
-          <Typography variant="h6">Features:</Typography>
-          <p>
-            # The dApp supports{" "}
-            <a href="https://eips.ethereum.org/EIPS/eip-1559">EIP-1559</a> and{" "}
-            <a href="https://eips.ethereum.org/EIPS/eip-2930">EIP-2930</a>{" "}
-            transactions
-          </p>
-        </Box>
-      </Container>
-    </div>
+    <>
+      <TextField
+        label="Raw Txn"
+        multiline
+        rows={4}
+        value={text}
+        onChange={handleChange}
+        fullWidth
+        style={{ paddingBottom: 20 }}
+      />
+      <Button variant="contained" onClick={handleDecode} disabled={!text}>
+        Decode
+      </Button>
+      {txn && (
+        <div
+          style={{
+            overflowY: "scroll",
+            border: "1px dashed grey",
+            padding: "0 13px",
+            marginTop: 20,
+          }}
+        >
+          <pre>{txn}</pre>
+        </div>
+      )}
+      {error && (
+        <Alert severity="error" style={{ marginTop: 20 }}>
+          {error}
+        </Alert>
+      )}
+      <Box style={{ marginTop: 20 }}>
+        <Typography variant="h6">Features:</Typography>
+        <p>
+          # The dApp supports{" "}
+          <a href="https://eips.ethereum.org/EIPS/eip-1559">EIP-1559</a> and{" "}
+          <a href="https://eips.ethereum.org/EIPS/eip-2930">EIP-2930</a>{" "}
+          transactions
+        </p>
+      </Box>
+    </>
+  );
+}
+
+function DecodeError() {
+  const [errorMsg, setErrorMsg] = useState();
+  const [errorText, setErrorText] = useState();
+
+  const handleChangeError = (event) => {
+    setErrorText();
+    setErrorMsg(event.target.value);
+  };
+
+  const handleDecodeError = () => {
+    if (errorMsg.startsWith("0x08c379a0")) {
+      const abiCoder = new utils.AbiCoder();
+      setErrorText(
+        abiCoder.decode(["string"], errorMsg.replace("0x08c379a0", "0x"))
+      );
+    } else {
+      setErrorText("== NOT POSSIBLE TO DECODE ==");
+    }
+  };
+
+  return (
+    <>
+      <TextField
+        label="Error"
+        multiline
+        rows={4}
+        value={errorMsg}
+        onChange={handleChangeError}
+        fullWidth
+        style={{ paddingBottom: 20 }}
+      />
+      <Button
+        variant="contained"
+        onClick={handleDecodeError}
+        disabled={!errorMsg}
+      >
+        Decode Error
+      </Button>
+      {errorText && (
+        <div
+          style={{
+            overflowY: "scroll",
+            border: "1px dashed grey",
+            padding: "0 13px",
+            marginTop: 20,
+          }}
+        >
+          <pre>{errorText}</pre>
+        </div>
+      )}
+    </>
   );
 }
 
