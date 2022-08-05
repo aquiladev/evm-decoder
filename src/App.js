@@ -44,6 +44,18 @@ function App() {
                   Decode error
                 </Typography>
               </RLink>
+              <RLink
+                to="/function-decode"
+                style={{
+                  color: "white",
+                  textDecoration: "none",
+                  marginLeft: 20,
+                }}
+              >
+                <Typography variant="h6" component="span">
+                  Decode function
+                </Typography>
+              </RLink>
             </div>
             <Link
               href="//github.com/aquiladev/decode-eth-tx"
@@ -67,6 +79,9 @@ function App() {
             </Route>
             <Route path="/error-decode">
               <DecodeError />
+            </Route>
+            <Route exect path="/function-decode">
+              <DecodeFunction />
             </Route>
           </Switch>
         </Container>
@@ -189,6 +204,82 @@ function DecodeError() {
           }}
         >
           <pre>{errorText}</pre>
+        </div>
+      )}
+    </>
+  );
+}
+
+function DecodeFunction() {
+  const [abi, setAbi] = useState(
+    '["function transferFrom(address from, address to, uint amount)"]'
+  );
+  const [data, setData] = useState();
+  const [result, setResult] = useState();
+
+  const handleChangeABI = (event) => {
+    setResult();
+    setAbi(event.target.value);
+  };
+
+  const handleChangeData = (event) => {
+    setResult();
+    setData(event.target.value);
+  };
+
+  const handleDecodeData = () => {
+    try {
+      const iface = new utils.Interface(JSON.parse(abi));
+      const selector = data.substring(0, 10);
+
+      const fragment = iface.getFunction(selector);
+      const _res = iface.decodeFunctionData(fragment, data);
+      setResult(JSON.stringify(_res, null, 2));
+    } catch (err) {
+      setResult("ERROR: " + err.message);
+    }
+  };
+
+  return (
+    <>
+      <div style={{ float: "right" }}>
+        Inrerface{" "}
+        <a href="https://docs.ethers.io/v5/api/utils/abi/interface/#Interface--creating">
+          exemple
+        </a>
+      </div>
+      <TextField
+        label="Interface"
+        multiline
+        rows={4}
+        value={abi}
+        defaultValue={abi}
+        onChange={handleChangeABI}
+        fullWidth
+        style={{ paddingBottom: 20 }}
+      />
+      <TextField
+        label="Data"
+        multiline
+        rows={4}
+        value={data}
+        onChange={handleChangeData}
+        fullWidth
+        style={{ paddingBottom: 20 }}
+      />
+      <Button variant="contained" onClick={handleDecodeData} disabled={!data}>
+        Decode Function
+      </Button>
+      {result && (
+        <div
+          style={{
+            overflowY: "scroll",
+            border: "1px dashed grey",
+            padding: "0 13px",
+            marginTop: 20,
+          }}
+        >
+          <pre>{result}</pre>
         </div>
       )}
     </>
