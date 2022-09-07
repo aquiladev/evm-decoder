@@ -1,5 +1,5 @@
-import bd4byte from "./4byte";
-import bdSamczsun from "./samczsun";
+import * as bd4byte from "./4byte";
+import * as bdSamczsun from "./samczsun";
 
 export async function getSignature(sighash) {
   const getters = [bd4byte.get, bdSamczsun.get];
