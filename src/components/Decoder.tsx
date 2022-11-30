@@ -96,7 +96,7 @@ function Decoder() {
                   <div>
                     Decoder: <b>{r.type}</b>
                   </div>
-                  <Alert severity="error" style={{ marginTop: 20 }}>
+                  <Alert severity="error" style={{ marginTop: 20, overflowWrap: "anywhere" }}>
                     {r.error}
                   </Alert>
                 </div>
