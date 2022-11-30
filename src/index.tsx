@@ -1,7 +1,8 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import ReactGA from 'react-ga';
 
+import './polyfill'
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -9,11 +10,13 @@ import reportWebVitals from './reportWebVitals';
 ReactGA.initialize('UA-215305995-1');
 ReactGA.pageview(window.location.pathname + window.location.search);
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
+root.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

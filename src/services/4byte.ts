@@ -4,7 +4,7 @@
  */
 
 // /api/v1/signatures/?hex_signature=0xabcd1234
-export async function get(sighash) {
+export async function get(sighash: string) {
   const url = `https://www.4byte.directory/api/v1/signatures/?hex_signature=${sighash}`;
   const res = await fetch(url).then((response) => response.json());
   console.log("[4byte]", res);

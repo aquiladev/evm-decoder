@@ -4,7 +4,7 @@
  */
 
 // /api/v1/signatures?all=false&function=0x9508b1c4
-export async function get(sighash) {
+export async function get(sighash: string) {
   const url = `https://sig.eth.samczsun.com/api/v1/signatures?all=false&function=${sighash}`;
   const res = await fetch(url).then((response) => response.json());
   console.log("[samczsun]", res);
