@@ -46,15 +46,15 @@ export async function decode(data: string, params: Record<string, any>) {
     let args: utils.Result;
     if (fragment.type === "function") {
       const abiCoder = new CustomAbiCoder();
-      args = abiCoder.decode(
-        fragment.inputs.map((i) => i.type),
-        arrayify(data).slice(4)
-      );
+      args = abiCoder.decode(fragment.inputs, arrayify(data).slice(4));
     } else if (fragment.type === "error") {
       args = iface.decodeErrorResult(fragment, data!);
     } else {
       throw new Error(`Unsupported fragment type ${fragment.type}`);
     }
+
+    // The code will fail in case of deffered errors after decoding
+    JSON.stringify(args);
 
     result.data = {
       type: fragment.type,
