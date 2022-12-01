@@ -4,9 +4,19 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Alert from "@mui/material/Alert";
 import { Paper } from "@mui/material";
+import ReactJson from "react-json-view";
 
 import { DecoderResult } from "../decoders/types";
 import { useState } from "react";
+import { BigNumber } from "ethers";
+
+Object.defineProperties(BigNumber.prototype, {
+  toJSON: {
+    value: function (this: BigNumber) {
+      return this.toHexString();
+    },
+  },
+});
 
 function TabPanel(props: any) {
   const { children, value, index, ...other } = props;
@@ -45,12 +55,12 @@ const tabs: Record<
     order: 0,
     render: (result: DecoderResult, value: number, index: number) => {
       return (
-        <TabPanel
-          value={value}
-          index={index}
-          style={{ overflowWrap: "anywhere" }}
-        >
-          <pre>{JSON.stringify(result.data, null, 2)}</pre>
+        <TabPanel value={value} index={index}>
+          <ReactJson
+            src={JSON.parse(JSON.stringify(result.data))}
+            name={result.type}
+            style={{ overflowWrap: "anywhere" }}
+          />
         </TabPanel>
       );
     },
@@ -60,11 +70,7 @@ const tabs: Record<
     order: 0,
     render: (result: DecoderResult, value: number, index: number) => {
       return (
-        <TabPanel
-          value={value}
-          index={index}
-          style={{ overflowWrap: "anywhere" }}
-        >
+        <TabPanel value={value} index={index}>
           <Alert severity="error" style={{ overflowWrap: "anywhere" }}>
             {result.error}
           </Alert>
@@ -117,7 +123,7 @@ function DecoderOutput(params: { result: DecoderResult; fields: string[] }) {
 }
 
 function Output({ data }: { data: DecoderResult[] }) {
-  const okResults = data.filter((r) => !!r.data);
+  const okResults = data.filter((r) => !r.error);
   return (
     <Box sx={{ width: "100%" }}>
       {okResults?.length
