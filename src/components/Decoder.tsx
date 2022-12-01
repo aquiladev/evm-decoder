@@ -4,11 +4,11 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Switch from "@mui/material/Switch";
 import { decode } from "../decoders";
 import { DecoderResult } from "../decoders/types";
+import Output from "./Output";
 
 function Decoder() {
   const [abi, setAbi] = useState(
@@ -31,82 +31,10 @@ function Decoder() {
   };
 
   const handleDecodeData = async () => {
-    const res = await decode(data!, {abi});
-    console.log('RESULT', res)
-    setResult(res)
-  }
-
-  const getDecodeOutput = () => {
-    const okResults = result?.filter(r => !!r.data)
-
-    if(okResults?.length) {
-      return (
-        <div
-          style={{ marginTop: 40 }}
-        >
-          {
-            okResults.map(r => {
-              return (
-                <div key={r.type}
-                  style={{
-                    borderTop: "1px dashed grey",
-                    padding: "13px 0",
-                    marginTop: 20,
-                  }}
-                >
-                  <div>
-                    <b>Decoder:</b> {r.type}
-                  </div>
-                  <div style={{ overflowWrap: "anywhere" }}>
-                    <b>Input:</b> {r.input}
-                  </div>
-                  <div>
-                    <b>Result:</b>
-                    <div
-                      style={{
-                        overflowY: "scroll",
-                        border: "1px dashed grey",
-                        padding: "0 13px",
-                      }}
-                    >
-                      <pre>{JSON.stringify(r.data, null, 2)}</pre>
-                    </div>
-                  </div>
-                </div>
-              )
-            })
-          }
-        </div>
-      );
-    } else {
-      return (
-        <div
-          style={{ marginTop: 40 }}
-        >
-          {
-            (result || []).map(r => {
-              return (
-                <div key={r.type}
-                  style={{
-                    borderTop: "1px dashed grey",
-                    padding: "13px 0",
-                    marginTop: 20,
-                  }}
-                >
-                  <div>
-                    Decoder: <b>{r.type}</b>
-                  </div>
-                  <Alert severity="error" style={{ marginTop: 20, overflowWrap: "anywhere" }}>
-                    {r.error}
-                  </Alert>
-                </div>
-              )
-            })
-          }
-        </div>
-      );
-    }
-  }
+    const res = await decode(data!, { abi });
+    console.log("RESULT", res);
+    setResult(res);
+  };
 
   return (
     <>
@@ -155,7 +83,7 @@ function Decoder() {
           style={{ marginLeft: 20 }}
         />
       </div>
-      {result && getDecodeOutput()}
+      {result && <Output data={result!} />}
       <Box style={{ marginTop: 20 }}>
         <Typography variant="h6">Features:</Typography>
         <p>
