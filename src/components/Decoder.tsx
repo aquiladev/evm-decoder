@@ -59,7 +59,7 @@ function Decoder() {
             label="Interface"
             multiline
             rows={2}
-            value={abi}
+            // value={abi}
             defaultValue={abi}
             onChange={handleChangeABI}
             fullWidth
@@ -83,7 +83,7 @@ function Decoder() {
           style={{ marginLeft: 20 }}
         />
       </div>
-      {result && <Output data={result!} />}
+      {result && <Output results={result!} />}
       <Box style={{ marginTop: 20 }}>
         <Typography variant="h6">Features:</Typography>
         <p>

@@ -58,9 +58,16 @@ export async function decode(data: string, params: Record<string, any>) {
 
     result.data = {
       type: fragment.type,
-      selector: `${sig} - ${sighash}`,
+      selector: sighash,
+      signature: sig,
       args,
     };
+
+    // Meta-transaction
+    if (sighash === '0x1bf7e13e') {
+      const _data = args[0][3];
+      result.data.metaTx = await decode(_data, params);
+    }
   } catch (err: any) {
     result.error = err.message;
   }

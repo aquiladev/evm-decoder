@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { BigNumber } from "ethers";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
@@ -6,9 +8,7 @@ import Alert from "@mui/material/Alert";
 import { Paper } from "@mui/material";
 import ReactJson from "react-json-view";
 
-import { DecoderResult } from "../decoders/types";
-import { useState } from "react";
-import { BigNumber } from "ethers";
+import { DecoderResult, FragmentData, TxData } from "../decoders/types";
 
 Object.defineProperties(BigNumber.prototype, {
   toJSON: {
@@ -43,96 +43,224 @@ const tabs: Record<
   {
     label: string;
     order: number;
-    render: (
-      result: DecoderResult,
-      value: number,
-      index: number
-    ) => JSX.Element;
+    render: (result: DecoderResult) => JSX.Element;
   }
 > = {
-  result: {
-    label: "Result",
+  tx: {
+    label: "Tx",
     order: 0,
-    render: (result: DecoderResult, value: number, index: number) => {
+    render: (result: DecoderResult) => {
+      const { tx } = result.data as TxData;
       return (
-        <TabPanel value={value} index={index}>
-          <ReactJson
-            src={JSON.parse(JSON.stringify(result.data))}
-            name={result.type}
-            style={{ overflowWrap: "anywhere" }}
-          />
-        </TabPanel>
+        <ReactJson
+          src={JSON.parse(JSON.stringify(tx))}
+          name="tx"
+          style={{ overflowWrap: "anywhere" }}
+        />
       );
+    },
+  },
+  txFragment: {
+    label: "Data",
+    order: 1,
+    render: (result: DecoderResult) => {
+      const { fragment } = result.data as TxData;
+      if (fragment) {
+        if (fragment.error) {
+          return (
+            <Alert severity="error" style={{ overflowWrap: "anywhere" }}>
+              {fragment.error}
+            </Alert>
+          );
+        } else {
+          const fragmentData = fragment.data as FragmentData;
+          return (
+            <>
+              <Typography variant="body1" style={{ padding: "0 0 6px 0" }}>
+                <b>Selector:</b> {fragmentData.selector}
+              </Typography>
+              <Typography variant="body1" style={{ padding: "6px 0" }}>
+                <b>Signature:</b> {fragmentData.signature}
+              </Typography>
+              <ReactJson
+                src={JSON.parse(JSON.stringify(fragmentData.args))}
+                name="data"
+                style={{ overflowWrap: "anywhere", marginTop: 10 }}
+              />
+            </>
+          );
+        }
+      } else {
+        return (
+          <Alert severity="info" style={{ overflowWrap: "anywhere" }}>
+            Transaction has no data
+          </Alert>
+        );
+      }
+    },
+  },
+  txFragmentMeta: {
+    label: "Meta",
+    order: 2,
+    render: (result: DecoderResult) => {
+      const { fragment } = result.data as TxData;
+      if (
+        fragment &&
+        fragment.data &&
+        (fragment.data as FragmentData).metaTx &&
+        (fragment.data as FragmentData).metaTx?.data
+      ) {
+        const fragmentData = fragment.data as FragmentData;
+        const metaData = fragmentData.metaTx?.data as FragmentData;
+        return (
+          <>
+            <Typography variant="body1" style={{ padding: "0 0 6px 0" }}>
+              <b>Selector:</b> {metaData.selector}
+            </Typography>
+            <Typography variant="body1" style={{ padding: "6px 0" }}>
+              <b>Signature:</b> {metaData.signature}
+            </Typography>
+            <ReactJson
+              src={JSON.parse(JSON.stringify(metaData.args))}
+              name="data"
+              style={{ overflowWrap: "anywhere", marginTop: 10 }}
+            />
+          </>
+        );
+      } else {
+        return (
+          <Alert severity="info" style={{ overflowWrap: "anywhere" }}>
+            No meta-tx detected
+          </Alert>
+        );
+      }
+    },
+  },
+  fragment: {
+    label: "Data",
+    order: 1,
+    render: (result: DecoderResult) => {
+      const fragmentData = result.data as FragmentData;
+      return (
+        <>
+          <Typography variant="body1" style={{ padding: "0 0 6px 0" }}>
+            <b>Selector:</b> {fragmentData.selector}
+          </Typography>
+          <Typography variant="body1" style={{ padding: "6px 0" }}>
+            <b>Signature:</b> {fragmentData.signature}
+          </Typography>
+          <ReactJson
+            src={JSON.parse(JSON.stringify(fragmentData.args))}
+            name="data"
+            style={{ overflowWrap: "anywhere", marginTop: 10 }}
+          />
+        </>
+      );
+    },
+  },
+  fragmentMeta: {
+    label: "Meta",
+    order: 2,
+    render: (result: DecoderResult) => {
+      const { metaTx } = result.data as FragmentData;
+      if (metaTx) {
+        const metaData = metaTx.data as FragmentData;
+        return (
+          <>
+            <Typography variant="body1" style={{ padding: "0 0 6px 0" }}>
+              <b>Selector:</b> {metaData.selector}
+            </Typography>
+            <Typography variant="body1" style={{ padding: "6px 0" }}>
+              <b>Signature:</b> {metaData.signature}
+            </Typography>
+            <ReactJson
+              src={JSON.parse(JSON.stringify(metaData.args))}
+              name="data"
+              style={{ overflowWrap: "anywhere", marginTop: 10 }}
+            />
+          </>
+        );
+      } else {
+        return (
+          <Alert severity="info" style={{ overflowWrap: "anywhere" }}>
+            No meta-tx detected
+          </Alert>
+        );
+      }
     },
   },
   error: {
     label: "Error",
-    order: 0,
-    render: (result: DecoderResult, value: number, index: number) => {
+    order: 3,
+    render: (result: DecoderResult) => {
       return (
-        <TabPanel value={value} index={index}>
-          <Alert severity="error" style={{ overflowWrap: "anywhere" }}>
-            {result.error}
-          </Alert>
-        </TabPanel>
+        <Alert severity="error" style={{ overflowWrap: "anywhere" }}>
+          {result.error}
+        </Alert>
       );
     },
   },
   input: {
     label: "Input",
-    order: 1,
-    render: (result: DecoderResult, value: number, index: number) => {
-      return (
-        <TabPanel
-          value={value}
-          index={index}
-          style={{ overflowWrap: "anywhere" }}
-        >
-          {result.input}
-        </TabPanel>
-      );
+    order: 4,
+    render: (result: DecoderResult) => {
+      return <>{result.input}</>;
     },
   },
 };
 
-function DecoderOutput(params: { result: DecoderResult; fields: string[] }) {
-  const { result, fields } = params;
+const _decoderTabs: Record<string, string[]> = {
+  Error: ["error", "input"],
+  RawTx: ["tx", "txFragment", "txFragmentMeta", "input"],
+  Fragment: ["fragment", "fragmentMeta", "input"],
+};
+
+function DecoderOutput(params: { result: DecoderResult; error: boolean }) {
+  const { result, error } = params;
   const [value, setValue] = useState(0);
 
   const handleChange = (_: any, newValue: number) => {
     setValue(newValue);
   };
 
-  const _tabs = fields
+  const _tabs = (error ? _decoderTabs["Error"] : _decoderTabs[result.type])
     .filter((f) => !!tabs[f])
     .map((t) => tabs[t])
     .sort((a, b) => a.order - b.order);
+
   return (
     <Paper sx={{ padding: 2, marginTop: 3 }} elevation={3}>
       <Typography variant="body1">
         <b>Decoder:</b> {result.type}
       </Typography>
       <Tabs value={value} onChange={handleChange}>
-        {_tabs.map((t) => {
-          return <Tab label={t.label} />;
+        {_tabs.map((t, i) => {
+          return <Tab label={t.label} value={i} />;
         })}
       </Tabs>
-      {_tabs.map((t) => t.render(result, value, t.order))}
+      {_tabs.map((t, i) => {
+        return (
+          <TabPanel
+            value={value}
+            index={i}
+            style={{ overflowWrap: "anywhere" }}
+          >
+            {t.render(result)}
+          </TabPanel>
+        );
+      })}
     </Paper>
   );
 }
 
-function Output({ data }: { data: DecoderResult[] }) {
-  const okResults = data.filter((r) => !r.error);
+function Output({ results }: { results: DecoderResult[] }) {
+  const okResults = results.filter((r) => !r.error);
+  const _results = okResults?.length ? okResults : results;
   return (
     <Box sx={{ width: "100%" }}>
-      {okResults?.length
-        ? okResults.map((r) => (
-            <DecoderOutput result={r} fields={["result", "input"]} />
-          ))
-        : data.map((r) => (
-            <DecoderOutput result={r} fields={["error", "input"]} />
-          ))}
+      {_results.map((r) => (
+        <DecoderOutput result={r} error={!okResults?.length} />
+      ))}
     </Box>
   );
 }
