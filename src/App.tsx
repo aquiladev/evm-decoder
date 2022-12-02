@@ -22,7 +22,10 @@ function App() {
           <AppBar position="static">
             <Toolbar>
               <div style={{ flex: "auto" }}>
-                <RLink to="/" style={{ color: "white", textDecoration: "none" }}>
+                <RLink
+                  to="/"
+                  style={{ color: "white", textDecoration: "none" }}
+                >
                   <Typography variant="h4" component="span">
                     EVM Decoder
                   </Typography>

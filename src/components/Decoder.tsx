@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Typography from "@mui/material/Typography";
@@ -6,16 +7,24 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Switch from "@mui/material/Switch";
+
 import { decode } from "../decoders";
 import { DecoderResult } from "../decoders/types";
 import Output from "./Output";
 
+function useQuery() {
+  const { search } = useLocation();
+  return useMemo(() => new URLSearchParams(search), [search]);
+}
+
 function Decoder() {
+  let query = useQuery();
+
   const [abi, setAbi] = useState(
     '["function transferFrom(address from, address to, uint amount)"]'
   );
   const [autoLookup, setAutoLookup] = useState<boolean>(true);
-  const [data, setData] = useState<string>();
+  const [data, setData] = useState<string>(query.get("input") || "");
   const [result, setResult] = useState<DecoderResult[]>();
 
   const handleChangeData = (event: any) => {
@@ -39,9 +48,9 @@ function Decoder() {
   return (
     <>
       <TextField
-        label="Data (raw tx, tx hash, error, calldata)"
+        label="Input (raw tx, tx hash, error, calldata)"
         multiline
-        rows={3}
+        rows={2}
         value={data}
         onChange={handleChangeData}
         fullWidth
