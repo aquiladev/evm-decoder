@@ -39,9 +39,9 @@ function Decoder() {
   return (
     <>
       <TextField
-        label="Data (raw tx, error, calldata)"
+        label="Data (raw tx, tx hash, error, calldata)"
         multiline
-        rows={4}
+        rows={3}
         value={data}
         onChange={handleChangeData}
         fullWidth

@@ -8,7 +8,14 @@ import Alert from "@mui/material/Alert";
 import { Paper } from "@mui/material";
 import ReactJson from "react-json-view";
 
-import { DecoderResult, FragmentData, TxData } from "../decoders/types";
+import { NETWORKS } from "../services";
+
+import {
+  DecoderResult,
+  FragmentData,
+  RawTxData,
+  TxData,
+} from "../decoders/types";
 
 Object.defineProperties(BigNumber.prototype, {
   toJSON: {
@@ -51,6 +58,26 @@ const tabs: Record<
     order: 0,
     render: (result: DecoderResult) => {
       const { tx } = result.data as TxData;
+      const network = NETWORKS.find((n) => n.chainId === tx.chainId);
+      return (
+        <>
+          <Typography variant="body1" style={{ padding: "0 0 6px 0" }}>
+            <b>Network:</b> {network?.name}
+          </Typography>
+          <ReactJson
+            src={JSON.parse(JSON.stringify(tx))}
+            name="tx"
+            style={{ overflowWrap: "anywhere" }}
+          />
+        </>
+      );
+    },
+  },
+  rawTx: {
+    label: "Tx",
+    order: 0,
+    render: (result: DecoderResult) => {
+      const { tx } = result.data as RawTxData;
       return (
         <ReactJson
           src={JSON.parse(JSON.stringify(tx))}
@@ -64,7 +91,7 @@ const tabs: Record<
     label: "Data",
     order: 1,
     render: (result: DecoderResult) => {
-      const { fragment } = result.data as TxData;
+      const { fragment } = result.data as RawTxData;
       if (fragment) {
         if (fragment.error) {
           return (
@@ -103,7 +130,7 @@ const tabs: Record<
     label: "Meta",
     order: 2,
     render: (result: DecoderResult) => {
-      const { fragment } = result.data as TxData;
+      const { fragment } = result.data as RawTxData;
       if (
         fragment &&
         fragment.data &&
@@ -211,7 +238,8 @@ const tabs: Record<
 
 const _decoderTabs: Record<string, string[]> = {
   Error: ["error", "input"],
-  RawTx: ["tx", "txFragment", "txFragmentMeta", "input"],
+  TxHash: ["tx", "txFragment", "txFragmentMeta", "input"],
+  RawTx: ["rawTx", "txFragment", "txFragmentMeta", "input"],
   Fragment: ["fragment", "fragmentMeta", "input"],
 };
 
@@ -235,7 +263,7 @@ function DecoderOutput(params: { result: DecoderResult; error: boolean }) {
       </Typography>
       <Tabs value={value} onChange={handleChange}>
         {_tabs.map((t, i) => {
-          return <Tab label={t.label} value={i} />;
+          return <Tab label={t.label} value={i} key={t.label} />;
         })}
       </Tabs>
       {_tabs.map((t, i) => {
@@ -243,6 +271,7 @@ function DecoderOutput(params: { result: DecoderResult; error: boolean }) {
           <TabPanel
             value={value}
             index={i}
+            key={result.type}
             style={{ overflowWrap: "anywhere" }}
           >
             {t.render(result)}
@@ -259,7 +288,7 @@ function Output({ results }: { results: DecoderResult[] }) {
   return (
     <Box sx={{ width: "100%" }}>
       {_results.map((r) => (
-        <DecoderOutput result={r} error={!okResults?.length} />
+        <DecoderOutput key={r.type} result={r} error={!okResults?.length} />
       ))}
     </Box>
   );
