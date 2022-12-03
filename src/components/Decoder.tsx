@@ -93,14 +93,21 @@ function Decoder() {
         />
       </div>
       {result && <Output results={result!} />}
-      <Box style={{ marginTop: 20 }}>
+      <hr style={{ margin: '20px 0' }}/>
+      <Box>
         <Typography variant="h6">Features:</Typography>
-        <p>
-          # The dApp supports{" "}
-          <a href="https://eips.ethereum.org/EIPS/eip-1559">EIP-1559</a> and{" "}
-          <a href="https://eips.ethereum.org/EIPS/eip-2930">EIP-2930</a>{" "}
-          transactions
-        </p>
+        <ul>
+          <li>
+            Decoding{" "}
+            <a href="https://eips.ethereum.org/EIPS/eip-1559">EIP-1559</a> and{" "}
+            <a href="https://eips.ethereum.org/EIPS/eip-2930">EIP-2930</a>{" "}
+            transactions
+          </li>
+          <li>Decoding transaction's input</li>
+          <li>Detecting and decoding meta-transaction in transaction's input</li>
+          <li>Transaction lookup in networks: Ethereum Mainnet, Goerli, Polygon
+          and Mumbai</li>
+        </ul>
       </Box>
     </>
   );

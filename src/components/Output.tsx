@@ -5,10 +5,11 @@ import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Alert from "@mui/material/Alert";
-import { Paper } from "@mui/material";
+import { Card, CardHeader } from "@mui/material";
 import ReactJson from "react-json-view";
 
 import { NETWORKS } from "../services";
+import decodeImg from "../assets/decode.png";
 
 import {
   DecoderResult,
@@ -38,7 +39,7 @@ function TabPanel(props: any) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          {children}
         </Box>
       )}
     </div>
@@ -243,6 +244,24 @@ const _decoderTabs: Record<string, string[]> = {
   Fragment: ["fragment", "fragmentMeta", "input"],
 };
 
+function Header(params: { label: string }) {
+  return (
+    <div style={{ display: "flex" }}>
+      <div
+        style={{
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          paddingRight: 20,
+        }}
+      >
+        <img src={decodeImg} alt="decoder" style={{ height: 32 }} />
+      </div>
+      <Typography variant="h5">{params.label} decoder</Typography>
+    </div>
+  );
+}
+
 function DecoderOutput(params: { result: DecoderResult; error: boolean }) {
   const { result, error } = params;
   const [value, setValue] = useState(0);
@@ -257,10 +276,8 @@ function DecoderOutput(params: { result: DecoderResult; error: boolean }) {
     .sort((a, b) => a.order - b.order);
 
   return (
-    <Paper sx={{ padding: 2, marginTop: 3 }} elevation={3}>
-      <Typography variant="body1">
-        <b>Decoder:</b> {result.type}
-      </Typography>
+    <Card variant="outlined" sx={{ padding: 2, marginTop: 3 }}>
+      <CardHeader title={<Header label={result.type} />} />
       <Tabs value={value} onChange={handleChange}>
         {_tabs.map((t, i) => {
           return <Tab label={t.label} value={i} key={t.label} />;
@@ -271,14 +288,14 @@ function DecoderOutput(params: { result: DecoderResult; error: boolean }) {
           <TabPanel
             value={value}
             index={i}
-            key={result.type}
+            key={`${result.type}${t.label}`}
             style={{ overflowWrap: "anywhere" }}
           >
             {t.render(result)}
           </TabPanel>
         );
       })}
-    </Paper>
+    </Card>
   );
 }
 
