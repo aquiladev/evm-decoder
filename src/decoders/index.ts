@@ -5,9 +5,9 @@ import * as fragment from "./fragment";
 import * as txhash from "./txhash";
 
 export function decode(
-  data: string,
+  source: string,
   params: Record<string, any> = {}
 ): Promise<DecoderResult[]> {
   const decoders = [fragment, rawtx, txhash];
-  return Promise.all(decoders.map((x) => x.decode(data, params)));
+  return Promise.all(decoders.map((x) => x.decode(source, params)));
 }

@@ -24,23 +24,11 @@ function Decoder() {
     '["function transferFrom(address from, address to, uint amount)"]'
   );
   const [autoLookup, setAutoLookup] = useState<boolean>(true);
-  const [data, setData] = useState<string>(query.get("input") || "");
+  const [source, setSource] = useState<string>(query.get("source") || "");
   const [result, setResult] = useState<DecoderResult[]>();
 
-  const handleChangeData = (event: any) => {
-    setData(event.target.value);
-  };
-
-  const handleChangeABI = (event: any) => {
-    setAbi(event.target.value);
-  };
-
-  const handleAutoLookup = (event: any) => {
-    setAutoLookup(event.target.checked);
-  };
-
-  const handleDecodeData = async () => {
-    const res = await decode(data!, { abi });
+  const handleDecode = async () => {
+    const res = await decode(source!, { abi });
     console.log("RESULT", res);
     setResult(res);
   };
@@ -48,11 +36,13 @@ function Decoder() {
   return (
     <>
       <TextField
-        label="Input (raw tx, tx hash, error, calldata)"
+        label="Source (raw tx, tx hash, error, calldata)"
         multiline
         rows={2}
-        value={data}
-        onChange={handleChangeData}
+        value={source}
+        onChange={(event: any) => {
+          setSource(event.target.value);
+        }}
         fullWidth
         style={{ paddingBottom: 20 }}
       />
@@ -70,7 +60,9 @@ function Decoder() {
             rows={2}
             // value={abi}
             defaultValue={abi}
-            onChange={handleChangeABI}
+            onChange={(event: any) => {
+              setAbi(event.target.value);
+            }}
             fullWidth
             style={{ paddingBottom: 20 }}
           />
@@ -78,22 +70,25 @@ function Decoder() {
       )}
       <div>
         <FormControl>
-          <Button
-            variant="contained"
-            onClick={handleDecodeData}
-            disabled={!data}
-          >
+          <Button variant="contained" onClick={handleDecode} disabled={!source}>
             Decode
           </Button>
         </FormControl>
         <FormControlLabel
-          control={<Switch checked={autoLookup} onChange={handleAutoLookup} />}
+          control={
+            <Switch
+              checked={autoLookup}
+              onChange={(event: any) => {
+                setAutoLookup(event.target.checked);
+              }}
+            />
+          }
           label="Signature auto-lookup"
           style={{ marginLeft: 20 }}
         />
       </div>
       {result && <Output results={result!} />}
-      <hr style={{ margin: '20px 0' }}/>
+      <hr style={{ margin: "20px 0" }} />
       <Box>
         <Typography variant="h6">Features:</Typography>
         <ul>
@@ -104,9 +99,13 @@ function Decoder() {
             transactions
           </li>
           <li>Decoding transaction's input</li>
-          <li>Detecting and decoding meta-transaction in transaction's input</li>
-          <li>Transaction lookup in networks: Ethereum Mainnet, Goerli, Polygon
-          and Mumbai</li>
+          <li>
+            Detecting and decoding meta-transaction in transaction's input
+          </li>
+          <li>
+            Transaction lookup in networks: Ethereum Mainnet, Goerli, Polygon
+            and Mumbai
+          </li>
         </ul>
       </Box>
     </>

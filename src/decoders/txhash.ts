@@ -4,14 +4,14 @@ import { DecoderResult } from "./types";
 import { decode as fragmentDecode } from './fragment'
 
 export async function decode(
-  data: string,
-  _: Record<string, any>
+  source: string,
+  params: Record<string, any>
 ): Promise<DecoderResult> {
-  const result: DecoderResult = { type: "TxHash", input: data };
+  const result: DecoderResult = { type: "TxHash", source };
   // TODO: validate hash hex
-  if (data.length === 66) {
+  if (source.length === 66) {
     try {
-      const tx = await getNetTx(data);
+      const tx = await getNetTx(source);
       if (!tx) {
         throw new Error('Tx not found')
       }
@@ -20,7 +20,7 @@ export async function decode(
         tx,
         fragment: tx.data === '0x' ?
           undefined :
-          await fragmentDecode(tx.data, {})
+          await fragmentDecode(tx.data, params)
       };
     } catch (err: any) {
       result.error = err?.message;

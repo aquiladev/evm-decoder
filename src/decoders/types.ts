@@ -28,7 +28,7 @@ export interface TxData {
 
 export type DecoderResult = {
   type: string;
-  input: string;
+  source: string;
   error?: string;
   data?: TxData
   | RawTxData

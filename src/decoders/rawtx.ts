@@ -5,17 +5,17 @@ import { DecoderResult } from "./types";
 import { decode as fragmentDecode } from './fragment'
 
 export async function decode(
-  data: string,
-  _: Record<string, any>
+  source: string,
+  params: Record<string, any>
 ): Promise<DecoderResult> {
-  const result: DecoderResult = { type: "RawTx", input: data };
+  const result: DecoderResult = { type: "RawTx", source };
   try {
-    const txData = toBuffer(data);
-    const tx = TransactionFactory.fromSerializedData(txData);
-    const _data = `0x${tx.data.toString('hex')}`;
+    const sourceBuffer = toBuffer(source);
+    const tx = TransactionFactory.fromSerializedData(sourceBuffer);
+    const txData = `0x${tx.data.toString('hex')}`;
     result.data = {
       tx,
-      fragment: _data === '0x' ? undefined : await fragmentDecode(_data, {})
+      fragment: txData === '0x' ? undefined : await fragmentDecode(txData, params)
     };
   } catch (err: any) {
     result.error = err?.message;

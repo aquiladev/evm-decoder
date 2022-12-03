@@ -25,8 +25,8 @@ export class CustomAbiCoder extends utils.AbiCoder {
   }
 }
 
-export async function decode(data: string, params: Record<string, any>) {
-  const result: DecoderResult = { type: "Fragment", input: data };
+export async function decode(source: string, params: Record<string, any>) {
+  const result: DecoderResult = { type: "Fragment", source };
 
   let iface = {} as utils.Interface;
 
@@ -34,7 +34,7 @@ export async function decode(data: string, params: Record<string, any>) {
   try {
     const { abi } = params;
     const funcs = JSON.parse(abi || "[]");
-    const sighash = data!.substring(0, 10);
+    const sighash = source!.substring(0, 10);
 
     const sig = await getSignature(sighash);
     if (sig) {
@@ -46,9 +46,9 @@ export async function decode(data: string, params: Record<string, any>) {
     let args: utils.Result;
     if (fragment.type === "function") {
       const abiCoder = new CustomAbiCoder();
-      args = abiCoder.decode(fragment.inputs, arrayify(data).slice(4));
+      args = abiCoder.decode(fragment.inputs, arrayify(source).slice(4));
     } else if (fragment.type === "error") {
-      args = iface.decodeErrorResult(fragment, data!);
+      args = iface.decodeErrorResult(fragment, source!);
     } else {
       throw new Error(`Unsupported fragment type ${fragment.type}`);
     }
@@ -65,8 +65,8 @@ export async function decode(data: string, params: Record<string, any>) {
 
     // Meta-transaction
     if (sighash === '0x1bf7e13e') {
-      const _data = args[0][3];
-      result.data.metaTx = await decode(_data, params);
+      const metaData = args[0][3];
+      result.data.metaTx = await decode(metaData, params);
     }
   } catch (err: any) {
     result.error = err.message;

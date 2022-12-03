@@ -37,11 +37,7 @@ function TabPanel(props: any) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 }
@@ -75,7 +71,7 @@ const tabs: Record<
     },
   },
   rawTx: {
-    label: "Tx",
+    label: "Raw Tx",
     order: 0,
     render: (result: DecoderResult) => {
       const { tx } = result.data as RawTxData;
@@ -89,7 +85,7 @@ const tabs: Record<
     },
   },
   txFragment: {
-    label: "Data",
+    label: "Tx Data",
     order: 1,
     render: (result: DecoderResult) => {
       const { fragment } = result.data as RawTxData;
@@ -150,7 +146,7 @@ const tabs: Record<
             </Typography>
             <ReactJson
               src={JSON.parse(JSON.stringify(metaData.args))}
-              name="data"
+              name="meta"
               style={{ overflowWrap: "anywhere", marginTop: 10 }}
             />
           </>
@@ -203,7 +199,7 @@ const tabs: Record<
             </Typography>
             <ReactJson
               src={JSON.parse(JSON.stringify(metaData.args))}
-              name="data"
+              name="meta"
               style={{ overflowWrap: "anywhere", marginTop: 10 }}
             />
           </>
@@ -228,20 +224,20 @@ const tabs: Record<
       );
     },
   },
-  input: {
-    label: "Input",
+  source: {
+    label: "Source",
     order: 4,
     render: (result: DecoderResult) => {
-      return <>{result.input}</>;
+      return <>{result.source}</>;
     },
   },
 };
 
 const _decoderTabs: Record<string, string[]> = {
-  Error: ["error", "input"],
-  TxHash: ["tx", "txFragment", "txFragmentMeta", "input"],
-  RawTx: ["rawTx", "txFragment", "txFragmentMeta", "input"],
-  Fragment: ["fragment", "fragmentMeta", "input"],
+  Error: ["error", "source"],
+  TxHash: ["tx", "txFragment", "txFragmentMeta", "source"],
+  RawTx: ["rawTx", "txFragment", "txFragmentMeta", "source"],
+  Fragment: ["fragment", "fragmentMeta", "source"],
 };
 
 function Header(params: { label: string }) {
