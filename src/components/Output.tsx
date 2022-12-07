@@ -108,7 +108,7 @@ const tabs: Record<
               </Typography>
               <ReactJson
                 src={JSON.parse(JSON.stringify(fragmentData.args))}
-                name="data"
+                name="params"
                 style={{ overflowWrap: "anywhere", marginTop: 10 }}
               />
             </>
@@ -175,7 +175,7 @@ const tabs: Record<
           </Typography>
           <ReactJson
             src={JSON.parse(JSON.stringify(fragmentData.args))}
-            name="data"
+            name="params"
             style={{ overflowWrap: "anywhere", marginTop: 10 }}
           />
         </>
