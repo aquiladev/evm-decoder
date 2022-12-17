@@ -1,6 +1,7 @@
 {
   "short_name": "EVM Decoder",
   "name": "EMV Decoder app",
+  "description": "Application for decoding EVM data (incluting transaction, input, error, etc.)",
   "icons": [
     {
       "src": "favicon.ico",
