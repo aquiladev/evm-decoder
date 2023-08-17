@@ -32,6 +32,12 @@ export const NETWORKS: Array<Network> = [
     rpc: 'https://polygon-rpc.com'
   },
   {
+    chainId: 250,
+    name: 'Fantom Opera',
+    explorer: 'https://ftmscan.com',
+    rpc: 'https://1rpc.io/ftm'
+  },
+  {
     chainId: 80001,
     name: 'Mumbai',
     explorer: 'https://mumbai.polygonscan.com',
@@ -39,10 +45,18 @@ export const NETWORKS: Array<Network> = [
   }
 ]
 
-export async function getNetTx(txHash: string) {
+export async function lookupTx(txHash: string) {
   const requests = Object.entries(NETWORKS).map(([, network]) => {
     const provider = new providers.JsonRpcProvider(network.rpc);
     return provider.getTransaction(txHash);
   })
   return (await Promise.all(requests)).find(r => !!r)
+}
+
+export function getProvider(chainId: number) {
+  const network = NETWORKS.find(n => n.chainId === chainId);
+  if (!network) {
+    throw new Error(`Network ${chainId} not found`);
+  }
+  return new providers.JsonRpcProvider(network.rpc);
 }

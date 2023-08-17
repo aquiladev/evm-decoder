@@ -1,4 +1,4 @@
-import { getNetTx } from "../services";
+import { lookupTx } from "../services";
 
 import { DecoderResult } from "./types";
 import { decode as fragmentDecode } from './fragment'
@@ -11,7 +11,7 @@ export async function decode(
   // TODO: validate hash hex
   if (source.length === 66) {
     try {
-      const tx = await getNetTx(source);
+      const tx = await lookupTx(source);
       if (!tx) {
         throw new Error('Tx not found')
       }
