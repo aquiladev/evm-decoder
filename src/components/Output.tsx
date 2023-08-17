@@ -187,7 +187,7 @@ const tabs: Record<
     order: 2,
     render: (result: DecoderResult) => {
       const { metaTx } = result.data as FragmentData;
-      if (metaTx) {
+      if (metaTx && metaTx.data) {
         const metaData = metaTx.data as FragmentData;
         return (
           <>
@@ -207,7 +207,7 @@ const tabs: Record<
       } else {
         return (
           <Alert severity="info" style={{ overflowWrap: "anywhere" }}>
-            No meta-tx detected
+            No meta-tx detected or meta-tx selector is not found
           </Alert>
         );
       }
