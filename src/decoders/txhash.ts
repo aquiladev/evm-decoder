@@ -1,5 +1,6 @@
-import { lookupTx } from "../services";
+import ReactGA from "react-ga4";
 
+import { lookupTx } from "../services";
 import { DecoderResult } from "./types";
 import { decode as fragmentDecode } from './fragment'
 
@@ -14,6 +15,13 @@ export async function decode(
       const tx = await lookupTx(source);
       if (!tx) {
         throw new Error('Tx not found')
+      }
+
+      if (tx.data !== '0x') {
+        ReactGA.event({
+          category: "tx_lookup",
+          action: "tx_found",
+        });
       }
 
       result.data = {

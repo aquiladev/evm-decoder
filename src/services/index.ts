@@ -17,7 +17,7 @@ export const NETWORKS: Array<Network> = [
     chainId: 1,
     name: 'Ethereum Mainnet',
     explorer: 'https://etherscan.io',
-    rpc: 'https://cloudflare-eth.com',
+    rpc: 'https://1rpc.io/eth',
   },
   {
     chainId: 5,
@@ -41,7 +41,7 @@ export const NETWORKS: Array<Network> = [
     chainId: 80001,
     name: 'Mumbai',
     explorer: 'https://mumbai.polygonscan.com',
-    rpc: 'https://matic-mumbai.chainstacklabs.com'
+    rpc: 'https://polygon-mumbai.blockpi.network/v1/rpc/public'
   }
 ]
 

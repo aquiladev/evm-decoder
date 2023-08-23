@@ -3,6 +3,7 @@ import { arrayify } from "ethers/lib/utils";
 import type { Reader } from "@ethersproject/abi/lib/coders/abstract-coder";
 import { StringCoder } from "@ethersproject/abi/lib/coders/string";
 import { Coder } from "@ethersproject/abi/lib/coders/abstract-coder";
+import ReactGA from "react-ga4";
 
 import { getSignature } from "../services";
 import { DecoderResult } from "./types";
@@ -65,6 +66,11 @@ export async function decode(source: string, params: Record<string, any>) {
 
     // Meta-transaction
     if (sighash === '0x1bf7e13e') {
+      ReactGA.event({
+        category: "decode",
+        action: "meta_tx_detected",
+      });
+
       const metaData = args[0][3];
       result.data.metaTx = await decode(metaData, params);
     }

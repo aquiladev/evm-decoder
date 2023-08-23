@@ -7,6 +7,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Switch from "@mui/material/Switch";
+import ReactGA from "react-ga4";
 
 import { decode } from "../decoders";
 import { DecoderResult } from "../decoders/types";
@@ -28,6 +29,10 @@ function Decoder() {
   const [result, setResult] = useState<DecoderResult[]>();
 
   const handleDecode = async () => {
+    ReactGA.event({
+      category: "decode",
+      action: "decode",
+    });
     const res = await decode(source!, { abi });
     console.log("RESULT", res);
     setResult(res);
