@@ -22,14 +22,17 @@ function App() {
           <AppBar position="static">
             <Toolbar>
               <div style={{ flex: "auto" }}>
-                <RLink
+                <Typography variant="h4" component="span">
+                  EVM Decoder
+                </Typography>
+                {/* <RLink
                   to="/"
                   style={{ color: "white", textDecoration: "none" }}
                 >
                   <Typography variant="h4" component="span">
                     EVM Decoder
                   </Typography>
-                </RLink>
+                </RLink> */}
               </div>
               <Link
                 href="//github.com/aquiladev/decode-eth-tx"
@@ -48,7 +51,18 @@ function App() {
           </AppBar>
           <Container style={{ marginTop: 40 }}>
             <Routes>
-              <Route path="/" element={<Decoder />} />
+              {/* <Route path="/" element={<Decoder />} /> */}
+              <Route
+                path="/"
+                element={
+                  <Typography variant="h4" component="span" color={"error"}>
+                    Outdated, pls use an alternative service like{" "}
+                    <Link href="https://tools.deth.net/calldata-decoder">
+                      dΞth tools
+                    </Link>
+                  </Typography>
+                }
+              />
             </Routes>
           </Container>
         </div>
